@@ -6,7 +6,7 @@ positions:
   filename: /tmp/positions.yaml
 
 clients:
-  - url: http://loki.sebastienbarbier.com/loki/api/v1/push
+  - url: https://loki.sebastienbarbier.com/loki/api/v1/push
     basic_auth:
       username: edwin
       password: TO_REPLACE_BY_REAL_PASSWORD
