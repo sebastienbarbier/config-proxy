@@ -11,10 +11,31 @@ clients:
       username: edwin
       password: TO_REPLACE_BY_REAL_PASSWORD
 scrape_configs:
-- job_name: nginx
+- job_name: seven23
   static_configs:
   - targets:
       - localhost
     labels:
       job: varlogs
-      __path__: /var/log/nginx/json_access.log
+      __path__: /var/log/nginx/app.seven23.log
+- job_name: sebastienbarbier_fr
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: varlogs
+      __path__: /var/log/nginx/sebastienbarbier.fr.log
+- job_name: sebastienbarbier_en
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: varlogs
+      __path__: /var/log/nginx/sebastienbarbier.en.log
+- job_name: sebastienbarbier_whereis
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: varlogs
+      __path__: /var/log/nginx/whereis.sebastienbarbier.log
