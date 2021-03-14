@@ -31,7 +31,7 @@ scrape_configs:
       - localhost
     labels:
       job: varlogs
-      __path__: /var/log/nginx/sebastienbarbier.en.log
+      __path__: /var/log/nginx/sebastienbarbier.com.log
 - job_name: sebastienbarbier_whereis
   static_configs:
   - targets:
