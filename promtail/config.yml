@@ -11,31 +11,55 @@ clients:
       username: edwin
       password: TO_REPLACE_BY_REAL_PASSWORD
 scrape_configs:
-- job_name: seven23
+- job_name: app_seven23
+  pipeline_stages:
+  - replace:
+      expression: '(?:[0-9]{1,3}\.){3}([0-9]{1,3})'
+      replace: '***'
   static_configs:
   - targets:
       - localhost
     labels:
-      job: varlogs
-      __path__: /var/log/nginx/app.seven23.log
+      job: app_seven23
+      host: config_proxy
+      agent: promtail
+      __path__: /var/log/nginx/app_seven23.log
 - job_name: sebastienbarbier_fr
+  pipeline_stages:
+  - replace:
+      expression: '(?:[0-9]{1,3}\.){3}([0-9]{1,3})'
+      replace: '***'
   static_configs:
   - targets:
       - localhost
     labels:
-      job: varlogs
-      __path__: /var/log/nginx/sebastienbarbier.fr.log
-- job_name: sebastienbarbier_en
+      job: sebastienbarbier_fr
+      host: config_proxy
+      agent: promtail
+      __path__: /var/log/nginx/sebastienbarbier_fr.log
+- job_name: sebastienbarbier_com
+  pipeline_stages:
+  - replace:
+      expression: '(?:[0-9]{1,3}\.){3}([0-9]{1,3})'
+      replace: '***'
   static_configs:
   - targets:
       - localhost
     labels:
-      job: varlogs
-      __path__: /var/log/nginx/sebastienbarbier.com.log
-- job_name: sebastienbarbier_whereis
+      job: sebastienbarbier_com
+      host: config_proxy
+      agent: promtail
+      __path__: /var/log/nginx/sebastienbarbier_com.log
+- job_name: whereis_sebastienbarbier
+  pipeline_stages:
+  - replace:
+      expression: '(?:[0-9]{1,3}\.){3}([0-9]{1,3})'
+      replace: '***'
   static_configs:
   - targets:
       - localhost
     labels:
-      job: varlogs
-      __path__: /var/log/nginx/whereis.sebastienbarbier.log
+      job: whereis_sebastienbarbier
+      host: config_proxy
+      agent: promtail
+      __path__: /var/log/nginx/whereis_sebastienbarbier.log
