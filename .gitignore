@@ -5,3 +5,4 @@ openvpn-data/conf/
 
 .env
 .DS_Store
+nginx/geolite
