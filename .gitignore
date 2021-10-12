@@ -2,3 +2,6 @@ certbot
 pihole/etc-pihole/**/*
 pihole/etc-dnsmasq.d/**/*
 openvpn-data/conf/
+
+.env
+.DS_Store
