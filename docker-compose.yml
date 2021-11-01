@@ -16,12 +16,16 @@ services:
     links:
       - openvpn
       - pihole
+    networks:
+      - myvlan
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
   certbot:
     image: certbot/certbot
     volumes:  
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+    networks:
+      - myvlan
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"    
   promtail:
     image: grafana/promtail:2.3.0
@@ -29,6 +33,8 @@ services:
       - /var/log:/var/log
       - ./promtail/config.yml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
+    networks:
+      - myvlan
   openvpn:
     cap_add:
      - NET_ADMIN
@@ -41,6 +47,8 @@ services:
     restart: always
     volumes:
      - ./openvpn-data/conf:/etc/openvpn
+    networks:
+      - myvlan
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
@@ -60,4 +68,15 @@ services:
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN
+    networks:
+      myvlan:
+        ipv4_address: 10.5.0.6
     restart: unless-stopped
+
+networks:
+  myvlan:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
