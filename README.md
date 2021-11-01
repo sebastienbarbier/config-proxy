@@ -10,4 +10,6 @@ This repo manage my personal proxy configuration
 ## Installation
 
 - Pull this repo on server side.
+- define MAXMIND_KEY env var
+- run install.sh
 - run init-letsencrypt.sh
