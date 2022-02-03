@@ -24,6 +24,19 @@ scrape_configs:
       host: config_proxy
       agent: promtail
       __path__: /var/log/nginx/app_seven23.filtered.log
+- job_name: blog_seven23
+  pipeline_stages:
+  - replace:
+      expression: '(?:[0-9]{1,3}\.){3}([0-9]{1,3})'
+      replace: '***'
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: blog_seven23
+      host: config_proxy
+      agent: promtail
+      __path__: /var/log/nginx/blog_seven23.filtered.log
 - job_name: seven23
   pipeline_stages:
   - replace:
