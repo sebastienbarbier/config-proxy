@@ -1,6 +1,7 @@
 version: '3'
 services:
   nginx:
+    container_name: config_proxy_nginx
     build: ./nginx
     ports:
       - "80:80"

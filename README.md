@@ -13,3 +13,9 @@ This repo manage my personal proxy configuration
 - define MAXMIND_KEY env var
 - run install.sh
 - run init-letsencrypt.sh
+
+## Update proxy conf
+
+- Pull this repo
+- User docker command to restart nginx (container name should be config_proxy_nginx)
+- run init-letsencrypt.sh
