@@ -1,4 +1,4 @@
-FROM nginx:1.9.3
+FROM nginx:1.24.0
 
 # Set the reset cache variable
 ENV REFRESHED_AT 2016-05-10
@@ -14,7 +14,8 @@ RUN apt-get update &&\
                        libpcre3 \
                        libpcre3-dev \
                        libssl-dev \
-                       zlib1g
+                       zlib1g \
+                       zlib1g-dev
 
 # Install C library for reading MaxMind DB files
 # Resource: https://github.com/maxmind/libmaxminddb
