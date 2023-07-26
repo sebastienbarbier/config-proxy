@@ -35,7 +35,7 @@ RUN git clone --recursive https://github.com/maxmind/libmaxminddb.git &&\
 #     apt-get install -y libmaxminddb0 libmaxminddb-dev mmdb-bin
 
 # Download Nginx and the Nginx geoip2 module
-ENV nginx_version 1.21.3
+ENV nginx_version 1.24.0
 RUN curl http://nginx.org/download/nginx-$nginx_version.tar.gz | tar xz &&\
     git clone https://github.com/leev/ngx_http_geoip2_module.git
 
