@@ -28,7 +28,7 @@ services:
       - OVPN_DISABLE_PUSH_BLOCK_DNS=0
       - OVPN_DNS=10.5.0.6
       - OVPN_MTU=1500
-    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://openvpn:1194 -s 10.0.70.0/24 -n 10.5.0.6 -p 'dhcp-option DNS 10.5.0.6' -p 'dhcp-option DNS 8.8.8.8' -p 'redirect-gateway def1' && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
+    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://vpn2.sebastienbarbier.com:1194 -s 10.0.70.0/24 -n 10.5.0.6 -p 'dhcp-option DNS 10.5.0.6' -p 'redirect-gateway def1' && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
