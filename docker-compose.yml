@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   nginx:
     container_name: config_proxy_nginx
@@ -19,15 +19,15 @@ services:
       - pihole
     networks:
       - myvlan
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
   certbot:
     image: certbot/certbot
-    volumes:  
+    volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     networks:
       - myvlan
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"    
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
   promtail:
     image: grafana/promtail:2.3.0
     volumes:
@@ -38,16 +38,16 @@ services:
       - myvlan
   openvpn:
     cap_add:
-     - NET_ADMIN
+      - NET_ADMIN
     image: kylemanna/openvpn
     container_name: openvpn
     ports:
-     - "1194:1194/udp"
+      - "1194:1194/udp"
     links:
       - pihole
     restart: always
     volumes:
-     - ./openvpn-data/conf:/etc/openvpn
+      - ./openvpn-data/conf:/etc/openvpn
     networks:
       - myvlan
   pihole:
@@ -58,13 +58,13 @@ services:
     #  - "53:53/udp"
     #  - "67:67/udp"
     environment:
-      TZ: 'America/Chicago'
+      TZ: "America/Chicago"
       VIRTUAL_HOST: dns.sebastienbarbier.com
       # WEBPASSWORD: 'set a secure password here or it will be random'
     # Volumes store your data between container upgrades
     volumes:
-      - './pihole/etc-pihole/:/etc/pihole/'
-      - './pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+      - "./pihole/etc-pihole/:/etc/pihole/"
+      - "./pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/"
     # Recommended but not required (DHCP needs NET_ADMIN)
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
@@ -78,6 +78,6 @@ networks:
   myvlan:
     driver: bridge
     ipam:
-     config:
-       - subnet: 10.5.0.0/16
-         gateway: 10.5.0.1
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1

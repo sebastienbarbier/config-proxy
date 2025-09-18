@@ -1,0 +1,62 @@
+services:
+  openvpn:
+    cap_add:
+      - NET_ADMIN
+    image: kylemanna/openvpn
+    container_name: openvpn
+    ports:
+      - "1194:1194/udp"
+    links:
+      - pihole
+    restart: always
+    volumes:
+      - ./openvpn-data/conf:/etc/openvpn
+    networks:
+      - myvlan
+    environment:
+      - OVPN_SERVER=10.0.70.0 255.255.255.0
+      - OVPN_PORT=1194
+      - OVPN_PROTO=udp
+      - OVPN_DEVICE=tun
+      - OVPN_CN=server
+      - OVPN_DEFROUTE=1
+      - OVPN_NAT=1
+      - OVPN_KEEPALIVE=10 60
+      - OVPN_CIPHER=AES-256-GCM
+      - OVPN_AUTH=SHA512
+      - OVPN_COMP_LZO=0
+      - OVPN_DISABLE_PUSH_BLOCK_DNS=0
+      - OVPN_DNS=10.5.0.6
+      - OVPN_MTU=1500
+    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://openvpn:1194 -s 10.0.70.0/24 -n 10.5.0.6 -p 'dhcp-option DNS 10.5.0.6' -p 'dhcp-option DNS 8.8.8.8' -p 'redirect-gateway def1' && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    #ports:
+    #  - "53:53/tcp"
+    #  - "53:53/udp"
+    #  - "67:67/udp"
+    environment:
+      TZ: "Europe/Zurich"
+      VIRTUAL_HOST: dns.sebastienbarbier.com
+      # WEBPASSWORD: 'set a secure password here or it will be random'
+    # Volumes store your data between container upgrades
+    volumes:
+      - "./pihole/etc-pihole/:/etc/pihole/"
+      - "./pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/"
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    networks:
+      myvlan:
+        ipv4_address: 10.5.0.6
+    restart: unless-stopped
+
+networks:
+  myvlan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
