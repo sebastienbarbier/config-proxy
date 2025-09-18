@@ -38,7 +38,7 @@ services:
     #  - "67:67/udp"
     environment:
       TZ: "Europe/Zurich"
-      VIRTUAL_HOST: dns.sebastienbarbier.com
+      VIRTUAL_HOST: pihole.sebastienbarbier.com
       # WEBPASSWORD: 'set a secure password here or it will be random'
     # Volumes store your data between container upgrades
     volumes:
