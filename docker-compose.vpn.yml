@@ -9,6 +9,8 @@ services:
     restart: always
     volumes:
       - ./openvpn-data/conf:/etc/openvpn
+    networks:
+      - myvlan
     environment:
       - OVPN_SERVER_URL=${VPN_SERVER_URL:-vpn2.sebastienbarbier.com}
     command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://$${OVPN_SERVER_URL}:1194 && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
