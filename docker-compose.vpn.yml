@@ -12,7 +12,7 @@ services:
       - ./openvpn-data/conf:/etc/openvpn
     environment:
       - OVPN_SERVER_URL=${VPN_SERVER_URL:-vpn2.sebastienbarbier.com}
-    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://$${OVPN_SERVER_URL}:1194 -s 10.5.1.0/24 -p 'dhcp-option DNS 10.5.0.6' -p 'dhcp-option DNS 8.8.8.8' -p 'redirect-gateway def1' -p 'route 10.5.0.0 255.255.0.0' -r '10.5.1.0/24 10.5.0.1' && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
+    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://$${OVPN_SERVER_URL}:1194 -s 10.5.1.0/24 -p 'dhcp-option DNS 10.5.0.6' -p 'dhcp-option DNS 8.8.8.8' -p 'redirect-gateway def1' -p 'route 10.5.0.0 255.255.0.0' -r '10.5.1.0/24' && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
