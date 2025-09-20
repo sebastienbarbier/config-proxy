@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   nginx:
     container_name: config_proxy_nginx
@@ -14,20 +14,17 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/geolite/GeoLite2-Country.mmdb:/etc/GeoLite2-Country.mmdb
       - ./nginx/geolite/GeoLite2-City.mmdb:/etc/GeoLite2-City.mmdb
-    links:
-      - openvpn
-      - pihole
     networks:
       - myvlan
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
   certbot:
     image: certbot/certbot
-    volumes:  
+    volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     networks:
       - myvlan
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"    
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
   promtail:
     image: grafana/promtail:2.3.0
     volumes:
@@ -36,48 +33,11 @@ services:
     command: -config.file=/etc/promtail/config.yml
     networks:
       - myvlan
-  openvpn:
-    cap_add:
-     - NET_ADMIN
-    image: kylemanna/openvpn
-    container_name: openvpn
-    ports:
-     - "1194:1194/udp"
-    links:
-      - pihole
-    restart: always
-    volumes:
-     - ./openvpn-data/conf:/etc/openvpn
-    networks:
-      - myvlan
-  pihole:
-    container_name: pihole
-    image: pihole/pihole:latest
-    #ports:
-    #  - "53:53/tcp"
-    #  - "53:53/udp"
-    #  - "67:67/udp"
-    environment:
-      TZ: 'America/Chicago'
-      VIRTUAL_HOST: dns.sebastienbarbier.com
-      # WEBPASSWORD: 'set a secure password here or it will be random'
-    # Volumes store your data between container upgrades
-    volumes:
-      - './pihole/etc-pihole/:/etc/pihole/'
-      - './pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
-    # Recommended but not required (DHCP needs NET_ADMIN)
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
-    cap_add:
-      - NET_ADMIN
-    networks:
-      myvlan:
-        ipv4_address: 10.5.0.6
-    restart: unless-stopped
 
 networks:
   myvlan:
     driver: bridge
     ipam:
-     config:
-       - subnet: 10.5.0.0/16
-         gateway: 10.5.0.1
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
