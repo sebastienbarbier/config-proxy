@@ -14,28 +14,15 @@ services:
     networks:
       - myvlan
     environment:
-      - OVPN_SERVER=10.5.0.0 255.255.0.0
-      - OVPN_PORT=1194
-      - OVPN_PROTO=udp
-      - OVPN_DEVICE=tun
-      - OVPN_CN=server
-      - OVPN_DEFROUTE=1
-      - OVPN_NAT=1
-      - OVPN_KEEPALIVE=10 60
-      - OVPN_CIPHER=AES-256-GCM
-      - OVPN_AUTH=SHA512
-      - OVPN_COMP_LZO=0
-      - OVPN_DISABLE_PUSH_BLOCK_DNS=1
-      - OVPN_DNS=10.5.0.6
-      - OVPN_MTU=1500
-    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://vpn2.sebastienbarbier.com:1194 -s 10.5.0.0/16 -n 10.5.0.6 -p 'dhcp-option DNS 10.5.0.6' -p 'redirect-gateway def1' && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
+      - OVPN_SERVER_URL=${VPN_SERVER_URL:-vpn2.sebastienbarbier.com}
+    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://$${OVPN_SERVER_URL}:1194 -s 10.0.70.0/24 -n 10.5.0.6 -p 'dhcp-option DNS 10.5.0.6' -p 'redirect-gateway def1' && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && ovpn_run"
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     ports:
       - "8080:80/tcp"
-      - "53:53/tcp"
-      - "53:53/udp"
+    #  - "53:53/tcp"
+    #  - "53:53/udp"
     #  - "67:67/udp"
     environment:
       TZ: "Europe/Zurich"
