@@ -13,27 +13,21 @@ services:
       myvlan:
         ipv4_address: 10.5.0.7
     environment:
-      - OVPN_SERVER_URL=${VPN_SERVER_URL:-vpn2.sebastienbarbier.com}
-    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://$${OVPN_SERVER_URL}:1194 -s 10.5.1.0/24 -n '10.5.0.6' -p 'redirect-gateway def1' -p 'route 10.5.0.0 255.255.255.0' -r '10.5.1.0/24' -N && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && echo 'Configuring iptables rules for VPN to Pi-hole routing...' && iptables -t nat -A POSTROUTING -s 10.5.1.0/24 -d 10.5.0.0/16 -o eth1 -j MASQUERADE && iptables -A FORWARD -s 10.5.1.0/24 -d 10.5.0.0/16 -j ACCEPT && iptables -A FORWARD -s 10.5.0.0/16 -d 10.5.1.0/24 -j ACCEPT && echo 'Iptables rules configured successfully' && ovpn_run"
+      - OVPN_SERVER_URL=${VPN_SERVER_URL}
+    command: /bin/bash -c "if [ ! -f /etc/openvpn/pki/ca.crt ]; then echo 'Initializing OpenVPN configuration...' && ovpn_genconfig -u udp://$${OVPN_SERVER_URL}:1194 -s 10.5.1.0/24 -n ' 10.5.0.6' -p 'redirect-gateway def1' -p 'route 10.5.0.0 255.255.255.0' -r '10.5.1.0/24' -N && EASYRSA_BATCH=1 ovpn_initpki nopass && EASYRSA_BATCH=1 easyrsa build-client-full client nopass && ovpn_getclient client > /etc/openvpn/client.ovpn && echo 'OpenVPN initialization complete! Client config saved to client.ovpn'; fi && echo 'Configuring iptables rules for VPN to Pi-hole routing...' && iptables -t nat -A POSTROUTING -s 10.5.1.0/24 -d 10.5.0.0/16 -o eth1 -j MASQUERADE && iptables -A FORWARD -s 10.5.1.0/24 -d 10.5.0.0/16 -j ACCEPT && iptables -A FORWARD -s 10.5.0.0/16 -d 10.5.1.0/24 -j ACCEPT && echo 'Iptables rules configured successfully' && ovpn_run"
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     ports:
       - "8080:80/tcp"
-    #  - "53:53/tcp"
-    #  - "53:53/udp"
-    #  - "67:67/udp"
     environment:
       TZ: "Europe/Zurich"
       VIRTUAL_HOST: pihole.sebastienbarbier.com
       VIRTUAL_PORT: 80
-      # WEBPASSWORD: 'set a secure password here or it will be random'
-    # Volumes store your data between container upgrades
+      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
     volumes:
       - "./pihole/etc-pihole/:/etc/pihole/"
       - "./pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/"
-    # Recommended but not required (DHCP needs NET_ADMIN)
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN
     networks:
